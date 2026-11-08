@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Web Bingo",
+  "version": "1.0.0",
+  "description": "A random bingo card of things to find on the web. Squares check themselves off as you browse.",
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["items.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Web Bingo"
+  }
+}
