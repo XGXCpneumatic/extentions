@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 220px; margin: 0; padding: 14px;
+      font: 13px/1.4 system-ui, sans-serif; color: #1f1f1f; background: #f3f8ec;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    h1 { margin: 0; font-size: 16px; }
+    label.toggle { display: flex; gap: 8px; align-items: center; cursor: pointer; font-weight: 600; }
+    fieldset { border: 1px solid #cfdcbf; border-radius: 8px; margin: 0; padding: 6px 10px 8px; }
+    legend { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #5f7350; padding: 0 4px; }
+    fieldset label { margin-right: 10px; cursor: pointer; }
+    p { margin: 0; font-size: 11px; color: #5f7350; }
+  </style>
+</head>
+<body>
+  <h1>🐼 Bamboo Panda</h1>
+
+  <label class="toggle"><input type="checkbox" id="enabled" checked> Show the panda</label>
+
+  <fieldset>
+    <legend>Corner</legend>
+    <label><input type="radio" name="corner" value="left"> Left</label>
+    <label><input type="radio" name="corner" value="right" checked> Right</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Size</legend>
+    <label><input type="radio" name="size" value="small"> S</label>
+    <label><input type="radio" name="size" value="medium" checked> M</label>
+    <label><input type="radio" name="size" value="large"> L</label>
+  </fieldset>
+
+  <p>He fades out when your cursor gets close, so he never blocks anything.</p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
