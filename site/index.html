@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Little Extensions</title>
+<meta name="description" content="Small, silly Chrome extensions: a bamboo-eating panda, web bingo, a hide-and-seek critter and more. Free to download.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ea;
+    --surface: #fffdf8;
+    --ink: #1f1d1a;
+    --muted: #6b655b;
+    --line: #e4dccb;
+    --accent: #2f7d4a;
+    --accent-ink: #ffffff;
+    --accent-soft: #e2f1e6;
+    --demo: #f1ece0;
+    --code: #efe8d8;
+    --shadow: 0 1px 2px rgba(40, 30, 10, .06), 0 8px 24px rgba(40, 30, 10, .06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171614;
+      --surface: #211f1c;
+      --ink: #f1ece3;
+      --muted: #a8a094;
+      --line: #36322c;
+      --accent: #5fbf7f;
+      --accent-ink: #0f1a12;
+      --accent-soft: #223428;
+      --demo: #2a2723;
+      --code: #2e2a25;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; }
+  h1, h2, h3 { font-family: "Bricolage Grotesque", system-ui, sans-serif; line-height: 1.1; margin: 0; }
+  a { color: var(--accent); }
+  code {
+    font: 0.9em ui-monospace, "Cascadia Code", Consolas, monospace;
+    background: var(--code);
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+
+  /* ---------- hero ---------- */
+  header { padding-block: 64px 36px; }
+  .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; }
+  h1 { font-size: clamp(38px, 7vw, 68px); font-weight: 800; margin-top: 10px; max-width: 14ch; }
+  .lede { color: var(--muted); font-size: 19px; max-width: 46ch; margin: 18px 0 0; }
+
+  /* ---------- install steps ---------- */
+  .install {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .step b { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+            background: var(--accent-soft); color: var(--accent); font-size: 14px; margin-right: 8px; }
+  .step p { margin: 8px 0 0; color: var(--muted); font-size: 14.5px; }
+  .copy {
+    font: inherit; font-size: 12px; margin-left: 4px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    border-radius: 6px; padding: 1px 7px;
+  }
+  .copy:hover { color: var(--ink); }
+
+  /* ---------- cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding-bottom: 56px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+  }
+  .card.wide { grid-column: 1 / -1; flex-direction: row; }
+  .card.wide .demo { flex: 0 0 44%; height: auto; min-height: 240px; }
+  .demo {
+    position: relative;
+    height: 210px;
+    background: var(--demo);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .card.wide .demo { border-bottom: 0; border-right: 1px solid var(--line); }
+  .demo-hint {
+    position: absolute; left: 12px; bottom: 10px;
+    font-size: 12px; color: var(--muted);
+  }
+  .body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .body h2 { font-size: 26px; font-weight: 800; }
+  .body p { margin: 0; color: var(--muted); }
+  .body ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+  .body li + li { margin-top: 2px; }
+  .actions { margin-top: auto; padding-top: 8px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .download {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--accent-ink);
+    font-weight: 700; text-decoration: none;
+    padding: 10px 18px; border-radius: 10px;
+  }
+  .download:hover { filter: brightness(1.08); }
+  .download svg { width: 18px; height: 18px; }
+  .source { font-size: 14px; }
+
+  /* ---------- demo: longest word ---------- */
+  .mini-popup {
+    width: min(300px, 86%);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; font-size: 13px; box-shadow: var(--shadow);
+  }
+  .mini-popup small { display: block; color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  .mini-popup .big { font-weight: 700; word-break: break-all; margin: 2px 0 10px; }
+  .mini-popup ol { margin: 0; padding-left: 18px; }
+  .mini-popup li span { color: var(--muted); float: right; }
+
+  /* ---------- demo: page flipper ---------- */
+  .fake-page {
+    width: min(250px, 80%);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px; transition: transform .6s cubic-bezier(.6, -0.2, .3, 1.3);
+  }
+  .fake-page.flipped { transform: rotate(180deg); }
+  .fake-page .bar { height: 8px; border-radius: 4px; background: var(--line); margin-top: 7px; }
+  .fake-page .title { font-weight: 800; font-size: 15px; }
+  .fake-page .img { height: 50px; border-radius: 6px; margin-top: 8px; background: linear-gradient(135deg, #8ec5ff, #ffd6a5); }
+  .flip-btn {
+    position: absolute; right: 12px; bottom: 10px;
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 8px; padding: 4px 12px;
+  }
+
+  /* ---------- demo: find pip ---------- */
+  #pip-demo { cursor: crosshair; display: block; }
+  #pip {
+    position: absolute; width: 30px; height: 30px; cursor: pointer;
+    transition: transform .15s; border: 0; padding: 0; background: none;
+  }
+  #pip:hover { transform: scale(1.25) rotate(-8deg); }
+  #pip-score {
+    position: absolute; right: 12px; top: 10px;
+    font-weight: 800; font-size: 14px; color: #ff8a3d;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;
+  }
+  .pip-scatter { position: absolute; inset: 0; color: var(--muted); opacity: .45; font-size: 11px; line-height: 1.9; padding: 14px; overflow: hidden; user-select: none; }
+
+  /* ---------- demo: web bingo ---------- */
+  .bingo { display: grid; grid-template-columns: repeat(5, 30px); gap: 4px; }
+  .bingo button {
+    width: 30px; height: 30px; padding: 0; font-size: 15px; cursor: pointer;
+    border: 1.5px solid var(--line); border-radius: 6px; background: var(--surface);
+  }
+  .bingo button.on { background: var(--accent-soft); border-color: var(--accent); }
+  .bingo button.free { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-size: 8px; font-weight: 800; }
+  .bingo-shout { position: absolute; top: 12px; font-weight: 800; color: #c0392b; letter-spacing: .05em; opacity: 0; transition: opacity .2s; }
+  .bingo-shout.show { opacity: 1; }
+
+  /* ---------- demo: panda ---------- */
+  .panda-demo { width: 190px; height: 190px; align-self: end; }
+  .panda-demo svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  #pd-mouth { animation: chew .52s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  #pd-bob { animation: bob .52s ease-in-out infinite; }
+  #pd-eyes { transform-box: fill-box; transform-origin: center; transition: transform .08s; }
+  #pd-eyes.blink { transform: scaleY(.1); }
+  @keyframes chew { 0%, 100% { transform: scaleY(.45); } 50% { transform: scaleY(1.15); } }
+  @keyframes bob { 50% { transform: translateY(-2px); } }
+
+  footer { border-top: 1px solid var(--line); padding-block: 24px 40px; color: var(--muted); font-size: 14px; }
+
+  @media (max-width: 760px) {
+    header { padding-block: 40px 24px; }
+    .install { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .card.wide { flex-direction: column; }
+    .card.wide .demo { flex: none; min-height: 210px; border-right: 0; border-bottom: 1px solid var(--line); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #pd-mouth, #pd-bob { animation: none; }
+    .fake-page { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Free Chrome extensions</div>
+    <h1>Little extensions for a sillier web</h1>
+    <p class="lede">A panda that eats bamboo while it watches you, a bingo card for the whole internet, and a few other tiny things to make browsing more fun.</p>
+  </header>
+
+  <section class="install" aria-label="How to install">
+    <div class="step"><b>1</b>Download &amp; unzip
+      <p>Click a download button below, then right-click the .zip and choose <em>Extract All</em>.</p></div>
+    <div class="step"><b>2</b>Turn on Developer mode
+      <p>Go to <code>chrome://extensions</code><button class="copy" data-copy="chrome://extensions">copy</button> and flip <em>Developer mode</em> on (top right).</p></div>
+    <div class="step"><b>3</b>Load unpacked
+      <p>Click <em>Load unpacked</em> and pick the folder you just unzipped. Done!</p></div>
+  </section>
+
+  <main class="grid">
+
+    <!-- Bamboo Panda -->
+    <article class="card wide">
+      <div class="demo">
+        <div class="panda-demo" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs><clipPath id="pd-clip"><rect x="0" y="71" width="120" height="60"/></clipPath></defs>
+            <ellipse cx="60" cy="112" rx="40" ry="30" fill="#fbfbfb" stroke="#3a3a3a" stroke-width="1.2"/>
+            <ellipse cx="33" cy="115" rx="13" ry="9" fill="#1f1f1f"/>
+            <ellipse cx="87" cy="115" rx="13" ry="9" fill="#1f1f1f"/>
+            <g id="pd-head">
+              <circle cx="34" cy="26" r="11" fill="#1f1f1f"/>
+              <circle cx="86" cy="26" r="11" fill="#1f1f1f"/>
+              <ellipse cx="60" cy="52" rx="34" ry="30" fill="#fbfbfb" stroke="#3a3a3a" stroke-width="1.2"/>
+              <ellipse cx="45" cy="51" rx="8" ry="10.5" fill="#1f1f1f" transform="rotate(30 45 51)"/>
+              <ellipse cx="75" cy="51" rx="8" ry="10.5" fill="#1f1f1f" transform="rotate(-30 75 51)"/>
+              <g id="pd-eyes">
+                <circle cx="46" cy="50" r="3.8" fill="#fff"/>
+                <circle cx="74" cy="50" r="3.8" fill="#fff"/>
+                <circle id="pd-pl" cx="46" cy="50" r="2.1" fill="#111"/>
+                <circle id="pd-pr" cx="74" cy="50" r="2.1" fill="#111"/>
+              </g>
+              <ellipse cx="38" cy="62" rx="4" ry="2.2" fill="#ffb3c1" opacity=".7"/>
+              <ellipse cx="82" cy="62" rx="4" ry="2.2" fill="#ffb3c1" opacity=".7"/>
+              <ellipse cx="60" cy="62" rx="4.2" ry="3" fill="#1f1f1f"/>
+              <path d="M60 65 v2.5" stroke="#1f1f1f" stroke-width="1.2" stroke-linecap="round"/>
+              <ellipse id="pd-mouth" cx="60" cy="71" rx="4.5" ry="2.5" fill="#5a2b2b"/>
+            </g>
+            <g clip-path="url(#pd-clip)">
+              <g transform="rotate(-10 60 71)">
+                <g id="pd-bob">
+                  <rect x="56.5" y="71" width="7" height="50" rx="1.5" fill="#7cb342"/>
+                  <rect x="56" y="80.4" width="8" height="1.6" rx=".8" fill="#4e7d23"/>
+                  <rect x="56" y="91.4" width="8" height="1.6" rx=".8" fill="#4e7d23"/>
+                  <rect x="56" y="102.4" width="8" height="1.6" rx=".8" fill="#4e7d23"/>
+                  <rect x="56" y="113.4" width="8" height="1.6" rx=".8" fill="#4e7d23"/>
+                </g>
+              </g>
+            </g>
+            <ellipse cx="49" cy="95" rx="8.5" ry="11" fill="#1f1f1f" transform="rotate(25 49 95)"/>
+            <ellipse cx="71" cy="95" rx="8.5" ry="11" fill="#1f1f1f" transform="rotate(-25 71 95)"/>
+          </svg>
+        </div>
+        <span class="demo-hint" style="top:10px;bottom:auto">Move your mouse around. He's watching.</span>
+      </div>
+      <div class="body">
+        <h2>🐼 Bamboo Panda</h2>
+        <p>A little panda sits in the corner of every page, munching bamboo and following your cursor with his eyes.</p>
+        <ul>
+          <li>Takes bites, drops crumbs, grabs a fresh stalk when he's done</li>
+          <li>Fades out when your cursor gets close, so he never blocks anything</li>
+          <li>Pick left or right corner and small, medium or large</li>
+        </ul>
+        <div class="actions">
+          <a class="download" href="downloads/bamboo-panda.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download</a>
+          <a class="source" href="https://github.com/XGXCpneumatic/extentions/tree/main/bamboo-panda">View code</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Web Bingo -->
+    <article class="card">
+      <div class="demo">
+        <div class="bingo-shout" id="bingo-shout">🎉 BINGO!</div>
+        <div class="bingo" id="bingo"></div>
+        <span class="demo-hint">Click squares to try it</span>
+      </div>
+      <div class="body">
+        <h2>🎱 Web Bingo</h2>
+        <p>A random bingo card of things to spot online. Squares check themselves off as you browse. Can you find everything?</p>
+        <ul>
+          <li>Find a cat, a 20-letter word, a palindrome, Japanese text…</li>
+          <li>Progress saves across every website</li>
+          <li>Easy, medium and hard squares on every card</li>
+        </ul>
+        <div class="actions">
+          <a class="download" href="downloads/web-bingo.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download</a>
+          <a class="source" href="https://github.com/XGXCpneumatic/extentions/tree/main/web-bingo">View code</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Find Pip -->
+    <article class="card">
+      <div class="demo" id="pip-demo">
+        <div class="pip-scatter" aria-hidden="true">lorem news weather sports recipes about contact login search home blog shop help menu settings profile cart deals video music photos maps travel games tech science health style books movies tv food art design code docs forum wiki faq careers press legal privacy terms cookies sitemap feed archive tags latest popular trending lorem news weather sports recipes about contact login search home blog shop help menu settings profile cart deals video music photos maps travel games tech science health style books movies tv food art design code docs forum wiki faq careers press legal privacy</div>
+        <span id="pip-score">0 found</span>
+        <button id="pip" aria-label="Pip">
+          <svg viewBox="0 0 40 40" width="30" height="30">
+            <line x1="20" y1="9" x2="24" y2="2" stroke="#5a3a1a" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="24.5" cy="2.5" r="2.5" fill="#ffd23f"/>
+            <ellipse cx="20" cy="25" rx="15" ry="14" fill="#ff8a3d" stroke="#5a3a1a" stroke-width="2"/>
+            <ellipse cx="20" cy="30" rx="8" ry="6" fill="#ffc499"/>
+            <circle cx="14" cy="21" r="4.5" fill="#fff" stroke="#5a3a1a" stroke-width="1.5"/>
+            <circle cx="26" cy="21" r="4.5" fill="#fff" stroke="#5a3a1a" stroke-width="1.5"/>
+            <circle cx="15" cy="22" r="2" fill="#222"/>
+            <circle cx="27" cy="22" r="2" fill="#222"/>
+            <path d="M16 30 Q20 33 24 30" fill="none" stroke="#5a3a1a" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <span class="demo-hint">Find Pip and click him!</span>
+      </div>
+      <div class="body">
+        <h2>🔎 Find Pip</h2>
+        <p>Pip hides somewhere on every page you visit. Spot him, click him, score a point. Then he runs off to hide again.</p>
+        <ul>
+          <li>Your score adds up across the whole web</li>
+          <li>"Show me where" button for when you give up</li>
+          <li>Turn him off any time</li>
+        </ul>
+        <div class="actions">
+          <a class="download" href="downloads/find-pip.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download</a>
+          <a class="source" href="https://github.com/XGXCpneumatic/extentions/tree/main/find-pip">View code</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Longest Word Tracker -->
+    <article class="card">
+      <div class="demo">
+        <div class="mini-popup" aria-hidden="true">
+          <small>This page</small>
+          <div class="big">electroencephalography <span style="color:var(--muted);font-weight:400">(22)</span></div>
+          <small>All-time longest</small>
+          <ol>
+            <li>pneumonoultramicroscopic… <span>45</span></li>
+            <li>antidisestablishmentarianism <span>28</span></li>
+            <li>incomprehensibilities <span>21</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="body">
+        <h2>📏 Longest Word Tracker</h2>
+        <p>Finds the longest word on every page you visit and keeps a leaderboard of the longest words you've ever seen.</p>
+        <ul>
+          <li>Top 50 all-time, with links back to where you found them</li>
+          <li>Ignores junk like code and random letter strings</li>
+        </ul>
+        <div class="actions">
+          <a class="download" href="downloads/longest-word-tracker.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download</a>
+          <a class="source" href="https://github.com/XGXCpneumatic/extentions/tree/main/longest-word-tracker">View code</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Page Flipper -->
+    <article class="card">
+      <div class="demo">
+        <div class="fake-page" id="fake-page" aria-hidden="true">
+          <div class="title">My Cool Website</div>
+          <div class="bar" style="width:90%"></div>
+          <div class="bar" style="width:70%"></div>
+          <div class="img"></div>
+          <div class="bar" style="width:80%"></div>
+        </div>
+        <button class="flip-btn" id="flip-btn">Flip it</button>
+      </div>
+      <div class="body">
+        <h2>🙃 Page Flipper</h2>
+        <p>One click turns the whole page upside down. Click again to flip it back. Great for pranks.</p>
+        <ul>
+          <li>Toolbar button or <code>Alt+Shift+F</code></li>
+          <li>Only touches the tab you click it on</li>
+        </ul>
+        <div class="actions">
+          <a class="download" href="downloads/page-flipper.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download</a>
+          <a class="source" href="https://github.com/XGXCpneumatic/extentions/tree/main/page-flipper">View code</a>
+        </div>
+      </div>
+    </article>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    Made by Amin · All code is on <a href="https://github.com/XGXCpneumatic/extentions">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  // ---------- copy buttons ----------
+  document.querySelectorAll(".copy").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy);
+        btn.textContent = "copied!";
+      } catch {
+        btn.textContent = "copy failed";
+      }
+      setTimeout(() => (btn.textContent = "copy"), 1500);
+    });
+  });
+
+  // ---------- panda: eyes follow the cursor ----------
+  (() => {
+    const svg = document.querySelector(".panda-demo svg");
+    const head = document.getElementById("pd-head");
+    const eyes = document.getElementById("pd-eyes");
+    const pupils = [[document.getElementById("pd-pl"), 46], [document.getElementById("pd-pr"), 74]];
+    let queued = false, mouse = null;
+
+    function look() {
+      queued = false;
+      const r = svg.getBoundingClientRect();
+      const s = r.width / 120;
+      let dx = 0, dy = 1;
+      if (mouse) {
+        dx = mouse.x - (r.left + 60 * s);
+        dy = mouse.y - (r.top + 50 * s);
+        const d = Math.hypot(dx, dy) || 1;
+        dx /= d; dy /= d;
+      }
+      for (const [p, cx] of pupils) {
+        p.setAttribute("cx", cx + dx * 1.6);
+        p.setAttribute("cy", 50 + dy * 1.6);
+      }
+      const tilt = mouse ? Math.max(-7, Math.min(7, dx * 7)) : 0;
+      head.setAttribute("transform", `rotate(${tilt.toFixed(2)} 60 82)`);
+    }
+    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(look); } };
+    document.addEventListener("mousemove", (e) => { mouse = { x: e.clientX, y: e.clientY }; queue(); }, { passive: true });
+    document.addEventListener("mouseout", (e) => { if (!e.relatedTarget) { mouse = null; queue(); } });
+    window.addEventListener("scroll", queue, { passive: true });
+
+    (function blink() {
+      setTimeout(() => {
+        eyes.classList.add("blink");
+        setTimeout(() => eyes.classList.remove("blink"), 140);
+        blink();
+      }, 2500 + Math.random() * 4000);
+    })();
+  })();
+
+  // ---------- web bingo mini card ----------
+  (() => {
+    const icons = ["🐱", "📧", "🦒", "🔁", "🗾", "📅", "💯", "🎬", "🐶", "🍕", "©️", "🌙", "FREE", "📞", "🎓", "#️⃣", "🍌", "📜", "🧮", "🦖", "😀", "📢", "🌡️", "🎞️", "🏛️"];
+    const start = new Set([0, 6, 18, 24, 3, 9]);
+    const grid = document.getElementById("bingo");
+    const shout = document.getElementById("bingo-shout");
+    const on = icons.map((_, i) => i === 12 || start.has(i));
+    const lines = [];
+    for (let i = 0; i < 5; i++) {
+      lines.push([0, 1, 2, 3, 4].map((j) => i * 5 + j), [0, 1, 2, 3, 4].map((j) => j * 5 + i));
+    }
+    lines.push([0, 6, 12, 18, 24], [4, 8, 12, 16, 20]);
+    const bingos = () => lines.filter((l) => l.every((i) => on[i])).length;
+
+    icons.forEach((icon, i) => {
+      const b = document.createElement("button");
+      b.textContent = icon;
+      if (icon === "FREE") b.className = "free";
+      else {
+        b.classList.toggle("on", on[i]);
+        b.addEventListener("click", () => {
+          const before = bingos();
+          on[i] = !on[i];
+          b.classList.toggle("on", on[i]);
+          if (bingos() > before) {
+            shout.classList.add("show");
+            setTimeout(() => shout.classList.remove("show"), 1400);
+          }
+        });
+      }
+      grid.append(b);
+    });
+  })();
+
+  // ---------- find pip mini game ----------
+  (() => {
+    const area = document.getElementById("pip-demo");
+    const pip = document.getElementById("pip");
+    const score = document.getElementById("pip-score");
+    let found = 0;
+    function hide() {
+      const w = area.clientWidth - 40, h = area.clientHeight - 70;
+      pip.style.left = 8 + Math.random() * w + "px";
+      pip.style.top = 36 + Math.random() * h + "px";
+    }
+    pip.addEventListener("click", () => {
+      found++;
+      score.textContent = `${found} found`;
+      hide();
+    });
+    hide();
+    window.addEventListener("resize", hide);
+  })();
+
+  // ---------- page flipper ----------
+  (() => {
+    const page = document.getElementById("fake-page");
+    const btn = document.getElementById("flip-btn");
+    btn.addEventListener("click", () => {
+      page.classList.toggle("flipped");
+      btn.textContent = page.classList.contains("flipped") ? "Flip back" : "Flip it";
+    });
+  })();
+</script>
+</body>
+</html>
