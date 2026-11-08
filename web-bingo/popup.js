@@ -25,6 +25,11 @@ function setInfo(title, lines) {
 
 function render(card) {
   if (!card) return;
+  if (card.cells.some((id) => id !== FREE && !ITEM_BY_ID[id])) {
+    // The card has a square that no longer exists. Let the background fix it; we'll re-render on change.
+    chrome.runtime.sendMessage({ type: "repair-card" });
+    return;
+  }
   const found = foundCount(card);
   const total = squareCount(card);
   const bingos = countBingos(card);

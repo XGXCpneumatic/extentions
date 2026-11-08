@@ -13,6 +13,8 @@ async function getCard() {
   if (!card) {
     card = newCard();
     await chrome.storage.local.set({ card });
+  } else if (repairCard(card)) {
+    await chrome.storage.local.set({ card });
   }
   return card;
 }
@@ -48,6 +50,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type === "found") {
     serialized(() => markFound(msg)).then(sendResponse, () => sendResponse({ newly: false }));
     return true; // we'll respond asynchronously
+  }
+  if (msg.type === "repair-card") {
+    serialized(getCard).then(() => sendResponse(true));
+    return true;
   }
   if (msg.type === "new-card") {
     serialized(() => chrome.storage.local.set({ card: newCard() })).then(() => sendResponse(true));

@@ -177,9 +177,6 @@ const ITEMS = [
   { id: "qnou", level: "hard", emoji: "🇶", label: "A Q without a U",
     hint: "A word where q isn't followed by u, like Qatar or Iraq.",
     test: (c) => findWord(c, (w, l) => l.length >= 4 && /q(?!u)/.test(l) && /[aeiou]/.test(l) && l !== "faqs") },
-  { id: "frog", level: "hard", emoji: "🐸", label: "A frog",
-    hint: 'The word "frog" or "toad", or a picture labeled as a frog.',
-    test: (c) => anyWord(c, ["frog", "frogs", "toad", "toads"]) || (c.text.includes("🐸") ? "🐸" : null) || imageLabel(c, /\b(frog|toad)s?\b/i) },
   { id: "temperature", level: "hard", emoji: "🌡️", label: "A temperature",
     hint: "Something like 72°F or 20 °C.",
     test: (c) => firstMatch(c.text, /-?\d+(?:\.\d+)?\s?°\s?[CF]\b/) },
@@ -244,6 +241,22 @@ function newCard() {
   const cells = shuffle(picks);
   cells.splice(Math.floor(cells.length / 2), 0, FREE); // free square in the middle
   return { cells, found: {}, createdAt: Date.now(), completedAt: null };
+}
+
+// If a square was removed from ITEMS, swap it on existing cards for an unused square.
+// Returns true if the card changed.
+function repairCard(card) {
+  let changed = false;
+  card.cells = card.cells.map((id) => {
+    if (id === FREE || ITEM_BY_ID[id]) return id;
+    changed = true;
+    delete card.found[id];
+    const unused = shuffle(ITEMS.filter((i) => !card.cells.includes(i.id)));
+    const replacement = unused.find((i) => i.level === "hard") || unused[0];
+    return replacement.id;
+  });
+  if (changed && card.completedAt && foundCount(card) < squareCount(card)) card.completedAt = null;
+  return changed;
 }
 
 const BINGO_LINES = (() => {
