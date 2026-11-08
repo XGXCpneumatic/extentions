@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Longest Word Tracker Test Page</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 24px 16px; color: #1d1d1f; background: #fafafa; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h2 { font-size: 16px; margin-top: 28px; }
+  .card { background: #fff; border: 1px solid #e3e3e3; border-radius: 10px; padding: 14px 16px; margin-top: 10px; }
+  .expect { border-left: 4px solid #2e9d5b; }
+  .junk { border-left: 4px solid #d9534f; }
+  .word { font-family: ui-monospace, monospace; word-break: break-all; }
+  .tag { display: inline-block; font-size: 12px; color: #666; background: #f0f0f0; border-radius: 4px; padding: 0 6px; margin-right: 6px; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+  button:hover { background: #f0f0f0; }
+  #added { margin-top: 10px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<h1>Longest Word Tracker test page</h1>
+<p>Open the extension popup on this page and compare it with the green boxes.</p>
+
+<h2>1. Normal words</h2>
+<div class="card expect">
+  <p>Expected answer on load: <strong class="word">floccinaucinihilipilification</strong> (29 letters).</p>
+  <p>Filler text with ordinary words: the quick brown fox jumps over the lazy dog.
+     A well-known mother-in-law said it wasn't her problem.
+     Antidisestablishmentarianism is a famous word but it is one letter shorter.</p>
+</div>
+
+<h2>2. Junk that must be ignored</h2>
+<p>Every item below is longer than 29 letters. If any of them shows up in the popup, that filter is broken.</p>
+
+<div class="card junk">
+  <p><span class="tag">over 50 letters</span>
+     <span class="word">Hyperextraordinarilyunbelievablesupercalifragilisticallymagnificent</span></p>
+  <p><span class="tag">camelCase code</span>
+     <span class="word">thisIsAnExtremelyLongCamelCaseVariableNameForTests</span></p>
+  <p><span class="tag">same letter 4+ times</span>
+     <span class="word">Gooooooooooooooooooooooooooooooooooooooal</span></p>
+  <p><span class="tag">no vowels</span>
+     <span class="word">bcdfghjklmnpqrstvwxzbcdfghjklmnpqrstvwxz</span></p>
+  <p><span class="tag">hidden text</span> (there is an invisible word right here:
+     <span class="hidden">hiddenwordthatshouldnevershowupanywhereatall</span>)</p>
+  <p><span class="tag">script code</span> (a word that only lives inside a script tag)</p>
+</div>
+
+<script>
+  // Text inside scripts is not visible, so the extension should never pick it up.
+  const scriptOnly = "scriptwordthatshouldnevershowupanywhereatall";
+</script>
+
+<h2>3. Text added after the page loads</h2>
+<div class="card expect">
+  <p>Click the button, wait about 2 seconds, then open the popup again.
+     It should switch to the 45-letter lung disease word, and that word should also show up at the top of the all-time list.</p>
+  <button id="add">Add a longer word</button>
+  <div id="added"></div>
+</div>
+
+<script>
+  document.getElementById("add").addEventListener("click", (e) => {
+    const p = document.createElement("p");
+    p.className = "word";
+    p.textContent = "pneumono" + "ultramicroscopicsilicovolcanoconiosis";
+    document.getElementById("added").append(p);
+    e.target.disabled = true;
+    e.target.textContent = "Added. Now open the popup";
+  });
+</script>
+
+</body>
+</html>
