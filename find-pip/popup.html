@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="score">
+    <div id="count">0</div>
+    <div class="label">times you found Pip</div>
+  </div>
+
+  <button id="hint" class="primary">Show me where he is</button>
+  <p id="hint-msg" hidden></p>
+
+  <label class="toggle">
+    <input type="checkbox" id="enabled" checked>
+    Hide Pip on pages
+  </label>
+
+  <button id="reset" class="small">Reset score</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>

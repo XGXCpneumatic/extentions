@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Find Pip",
+  "version": "1.0.0",
+  "description": "Pip hides somewhere on every page. Find and click him to score a point. He'll run off and hide again.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Find Pip"
+  }
+}
