@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Page Flipper",
+  "version": "1.0.0",
+  "description": "Click the toolbar button to turn the whole page upside down. Click again to flip it back.",
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Flip this page upside down"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+F" },
+      "description": "Flip the page"
+    }
+  }
+}
